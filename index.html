@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campus Print Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <a class="brand" href="#request" aria-label="Campus Print Desk home">
+      <svg width="32" height="32" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="15" cy="15" r="8"/><circle cx="15" cy="15" r="2.5" fill="currentColor" stroke="none"/>
+        <path d="M15 1v8M15 21v8M1 15h8M21 15h8"/>
+      </svg>
+      <span><b>Campus Print Desk</b><small>Skip the queue, not the paper.</small></span>
+    </a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#request" data-tab="request">New request</a>
+      <a href="#track" data-tab="track">My requests</a>
+      <a href="#dashboard" data-tab="dashboard" id="tabDash" hidden>Dashboard</a>
+      <a href="#queue" data-tab="queue" id="tabQueue" hidden>Print queue</a>
+      <a href="#settings" data-tab="settings" id="tabSet" hidden>Settings</a>
+    </nav>
+  </header>
+  <div class="banner" id="banner" role="status" hidden></div>
+  <div class="notice" id="shopNotice" role="status" hidden></div>
+
+  <main>
+    <!-- NEW REQUEST -->
+    <section id="view-request" aria-labelledby="h-request">
+      <h1 id="h-request">Send a job to the print desk</h1>
+      <p class="lede" id="leadRequest">Add your document and print settings. You get a request number, follow the job on screen, and collect it when it is ready.</p>
+      <div class="editbar" id="editBar" role="status" hidden></div>
+
+      <div class="layout" id="formLayout">
+        <form class="panel form" id="reqForm" novalidate>
+          <fieldset>
+            <legend>Who is collecting</legend>
+            <div class="row">
+              <div class="field"><label class="lab" for="name">Full name</label>
+                <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Ananya Rawat" aria-describedby="err-name"><div class="err" id="err-name"></div></div>
+              <div class="field"><label class="lab" for="roll">Roll number or staff ID</label>
+                <input type="text" id="roll" name="roll" autocomplete="off" placeholder="e.g. 23BCE1042" aria-describedby="err-roll"><div class="err" id="err-roll"></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="dept">Department or hostel block</label>
+                <input type="text" id="dept" name="dept" autocomplete="off" placeholder="e.g. Civil Engineering, 3rd year" aria-describedby="err-dept"><div class="err" id="err-dept"></div></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Document</legend>
+            <div class="row">
+              <div class="field"><label class="lab" for="category">Type of document</label>
+                <select id="category" name="category"></select></div>
+              <div class="field"><label class="lab" for="title">Document name</label>
+                <input type="text" id="title" name="title" autocomplete="off" placeholder="e.g. Structural Analysis lab report" aria-describedby="err-title"><div class="err" id="err-title"></div></div>
+            </div>
+            <div class="row" id="fileField">
+              <div class="field"><label class="lab" for="file">Upload your file <span class="hint">(optional, PDF, PNG or JPEG, up to 20 MB)</span></label>
+                <input type="file" id="file" name="file" accept="application/pdf,image/png,image/jpeg" aria-describedby="hint-file err-file">
+                <div class="hint" id="hint-file">Word file? Use Save as PDF first so the layout prints as you see it.</div>
+                <div class="hint" id="fileNote"></div><div class="err" id="err-file"></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="link">Or paste a file link <span class="hint">(optional)</span></label>
+                <input type="text" id="link" name="link" inputmode="url" autocomplete="off" placeholder="https://drive.google.com/..." aria-describedby="hint-link err-link">
+                <div class="hint" id="hint-link">Google Drive or OneDrive, shared as "anyone with the link can view". You can also bring a pen drive to the counter.</div><div class="err" id="err-link"></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="pages">Pages in the document</label>
+                <input type="number" id="pages" name="pages" min="1" max="500" step="1" value="12" inputmode="numeric" aria-describedby="err-pages"><div class="err" id="err-pages"></div></div>
+              <div class="field"><label class="lab" for="copies">Copies</label>
+                <input type="number" id="copies" name="copies" min="1" max="100" step="1" value="1" inputmode="numeric" aria-describedby="err-copies"><div class="err" id="err-copies"></div></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Print settings</legend>
+            <div class="row">
+              <div class="field"><span class="lab" id="lab-paper">Paper size</span>
+                <div class="opts" role="radiogroup" aria-labelledby="lab-paper">
+                  <label class="chip"><input type="radio" name="paper" value="A5"><span>A5</span></label>
+                  <label class="chip"><input type="radio" name="paper" value="A4" checked><span>A4</span></label>
+                  <label class="chip"><input type="radio" name="paper" value="A3"><span>A3</span></label>
+                </div></div>
+              <div class="field"><span class="lab" id="lab-colour">Colour</span>
+                <div class="opts" role="radiogroup" aria-labelledby="lab-colour">
+                  <label class="chip"><input type="radio" name="colour" value="bw" checked><span>Black &amp; white</span></label>
+                  <label class="chip"><input type="radio" name="colour" value="colour"><span>Colour</span></label>
+                </div></div>
+            </div>
+            <div class="row">
+              <div class="field"><span class="lab" id="lab-sides">Sides</span>
+                <div class="opts" role="radiogroup" aria-labelledby="lab-sides">
+                  <label class="chip"><input type="radio" name="sides" value="single" checked><span>Single-sided</span></label>
+                  <label class="chip"><input type="radio" name="sides" value="double"><span>Double-sided</span></label>
+                </div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="gsm">Paper weight</label>
+                <select id="gsm" name="gsm">
+                  <option value="70">70 GSM (thin, drafts)</option>
+                  <option value="80" selected>80 GSM (standard)</option>
+                  <option value="100">100 GSM (thick, reports)</option>
+                </select></div>
+              <div class="field"><label class="lab" for="binding">Binding</label>
+                <select id="binding" name="binding">
+                  <option value="None" selected>None</option>
+                  <option value="Staple">Staple (corner)</option>
+                  <option value="Spiral">Spiral binding</option>
+                  <option value="Thermal">Thermal binding</option>
+                </select></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Timing and notes</legend>
+            <div class="row">
+              <div class="field"><span class="lab" id="lab-prio">Priority</span>
+                <div class="opts" role="radiogroup" aria-labelledby="lab-prio">
+                  <label class="chip"><input type="radio" name="priority" value="standard" checked><span>Standard</span></label>
+                  <label class="chip"><input type="radio" name="priority" value="express"><span id="expressLabel">Express</span></label>
+                </div>
+                <div class="hint" id="prioHint"></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="due">Needed by</label>
+                <input type="date" id="due" name="due" aria-describedby="err-due"><div class="err" id="err-due"></div></div>
+            </div>
+            <div class="row">
+              <div class="field"><label class="lab" for="notes">Notes for the shop <span class="hint">(optional)</span></label>
+                <textarea id="notes" name="notes" maxlength="400" placeholder="e.g. Pages 4 to 9 in colour, rest black and white. Print the cover on 100 GSM."></textarea></div>
+            </div>
+          </fieldset>
+
+          <div class="alert" id="formError" role="alert" hidden></div>
+          <div class="actions">
+            <button class="btn primary" type="submit" id="submitBtn">Send to print desk</button>
+            <button class="btn" type="button" id="cancelEdit" hidden>Cancel changes</button>
+            <span class="formnote" id="formNote">The estimate is a guide. The counter confirms the final price when you collect.</span>
+          </div>
+        </form>
+
+        <aside class="panel ticket" aria-label="Job ticket and price estimate">
+          <div class="tk-head"><b>Job ticket</b><span id="tk-ref">Ref on submit</span></div>
+          <div class="bar" id="bar" data-mode="bw" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <dl class="tk-rows">
+            <div><dt>Paper</dt><dd id="tk-paper"></dd></div>
+            <div><dt>Mode</dt><dd id="tk-mode"></dd></div>
+            <div><dt>Pages x copies</dt><dd id="tk-pages"></dd></div>
+            <div><dt>Sheets of paper</dt><dd id="tk-sheets"></dd></div>
+            <div><dt>Binding</dt><dd id="tk-binding"></dd></div>
+            <div><dt>Priority</dt><dd id="tk-prio"></dd></div>
+          </dl>
+          <div class="tk-total"><small>Estimated cost</small><strong id="tk-total">0</strong><p id="tk-break"></p></div>
+        </aside>
+      </div>
+
+      <div class="panel done" id="confirm" hidden>
+        <h2>Request sent</h2>
+        <p class="sub" id="confirmSub"></p>
+        <div class="refbox"><span class="refcode" id="confirmRef"></span><button class="btn" type="button" id="copyRef">Copy request number</button></div>
+        <div class="hint" id="copyMsg" role="status"></div>
+        <p class="pinline" id="confirmPin"></p>
+        <ol>
+          <li>The print desk sees your job in its queue, earliest due date first.</li>
+          <li>Open My requests to watch it move from Received to Printing to Ready.</li>
+          <li>Collect it at the counter with your ID card and your pickup PIN, and pay the final amount there.</li>
+        </ol>
+        <div class="actions"><a class="btn primary" id="confirmTrack" href="#track">Track this request</a><button class="btn" type="button" id="another">Send another job</button></div>
+      </div>
+    </section>
+
+    <!-- MY REQUESTS -->
+    <section id="view-track" aria-labelledby="h-track" hidden>
+      <h1 id="h-track">Where is my print job?</h1>
+      <p class="lede">Enter your request number, or search your own requests below.</p>
+      <div class="stats" id="sumMine"></div>
+      <form class="panel lookup" id="lookupForm">
+        <div class="field"><label class="lab" for="refInput">Request number</label>
+          <input type="text" id="refInput" autocomplete="off" placeholder="PR-3K9XA7F"></div>
+        <button class="btn primary" type="submit">Check status</button>
+      </form>
+      <div id="trackResult" aria-live="polite"></div>
+      <div class="section-title"><h2>Your requests</h2></div>
+      <div class="toolbar">
+        <div class="field grow"><label class="lab" for="mySearch">Search</label><input type="search" id="mySearch" placeholder="Document name, number or type"></div>
+        <div class="field"><label class="lab" for="myStatus">Status</label><select id="myStatus"></select></div>
+        <div class="field"><label class="lab" for="myCat">Type</label><select id="myCat"></select></div>
+      </div>
+      <p class="count" id="myCount" role="status"></p>
+      <div class="panel" id="myList"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" aria-labelledby="h-dash" hidden>
+      <h1 id="h-dash">Print desk dashboard</h1>
+      <p class="lede">What is waiting, what is late, and how much paper the day needs.</p>
+      <div class="stats" id="dashStats"></div>
+      <div class="charts" id="dashCharts"></div>
+      <div class="panel attention" id="dashAttention"></div>
+    </section>
+
+    <!-- QUEUE -->
+    <section id="view-queue" aria-labelledby="h-queue" hidden>
+      <h1 id="h-queue">Print queue</h1>
+      <p class="lede">Express jobs first, then the earliest due date. Move each job forward as you print it and students see the change straight away.</p>
+      <div class="filters" id="filters" role="group" aria-label="Filter jobs by status"></div>
+      <div class="toolbar">
+        <div class="field grow"><label class="lab" for="qSearch">Search</label><input type="search" id="qSearch" placeholder="Name, roll number, document or request number"></div>
+        <div class="field"><label class="lab" for="qCat">Type</label><select id="qCat"></select></div>
+        <div class="field"><label class="lab" for="qPaper">Paper</label>
+          <select id="qPaper"><option value="all">All sizes</option><option value="A5">A5</option><option value="A4">A4</option><option value="A3">A3</option></select></div>
+        <div class="field"><label class="lab" for="qColour">Colour</label>
+          <select id="qColour"><option value="all">Any</option><option value="bw">Black &amp; white</option><option value="colour">Colour</option></select></div>
+        <div class="field"><label class="lab" for="qPrio">Priority</label>
+          <select id="qPrio"><option value="all">All</option><option value="express">Express only</option></select></div>
+        <div class="field"><label class="lab" for="qSort">Sort by</label>
+          <select id="qSort"><option value="due">Express first, then due date</option><option value="new">Newest first</option><option value="price">Highest price</option></select></div>
+        <button class="btn" type="button" id="qReset">Clear filters</button>
+        <button class="btn" type="button" id="exportBtn" hidden>Export CSV</button>
+      </div>
+      <p class="count" id="qCount" role="status"></p>
+      <div class="panel" id="queueList"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" aria-labelledby="h-set" hidden>
+      <h1 id="h-set">Shop settings</h1>
+      <p class="lede">Set your own rates, the express fee and the opening state. Students see the changes straight away, with no code to edit.</p>
+      <form class="panel form" id="setForm" novalidate>
+        <div id="setBody"></div>
+        <div class="alert" id="setError" role="alert" hidden></div>
+        <div class="actions">
+          <button class="btn primary" type="submit" id="setSave">Save settings</button>
+          <button class="btn" type="button" id="setReset">Load default values</button>
+          <button class="btn danger" type="button" id="wipeLocal" hidden>Clear demo data</button>
+          <span class="formnote">Existing requests keep the estimate they were sent with. Final prices are set per job in the queue.</span>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+</html>
